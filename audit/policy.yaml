@@ -1,0 +1,74 @@
+apiVersion: audit.alauda.io/v1alpha1
+kind: Policy
+rules:
+  - match:
+      path: /integrations/v1alpha1/clusterintegrations/[0-9A-Za-z-]+/?/projects
+      methods: ["post"]
+    process:
+      objectRef:
+        resource: "Project"
+        apiGroup: "meta.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Response.metadata.name}}"
+        namespace: "{{.Response.metadata.namespace}}"
+  - match:
+      path: /integrations/v1alpha1/namespaces/[0-9A-Za-z-]+/integrations/[0-9A-Za-z-]+/projects/[-./A-Za-z0-9_\p{Han}]+/testplans/[0-9A-Za-z-]+/testcases/[0-9A-Za-z-]+/executions
+      methods: ["post"]
+    process:
+      objectRef:
+        resource: "TestCaseExecution"
+        apiGroup: "meta.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Response.metadata.name}}"
+        namespace: "{{.Response.metadata.namespace}}"
+  - match:
+      path: /namespaces/[0-9A-Za-z-]+/integrations/[0-9A-Za-z-]+/projects/[-./A-Za-z0-9_\p{Han}]+/issues/[0-9A-Za-z-]+/branches
+      methods: ["post"]
+    process:
+      objectRef:
+        resource: "RelationBranch"
+        apiGroup: "meta.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Response.metadata.name}}"
+        namespace: "{{.Response.metadata.namespace}}"
+  - match:
+      path: /namespaces/[0-9A-Za-z-]+/integrations/[0-9A-Za-z-]+/projects/[-./A-Za-z0-9_\p{Han}]+/issues/[0-9A-Za-z-]+/branches/[0-9A-Za-z-]+
+      methods: ["delete"]
+    process:
+      objectRef:
+        resource: "RelationBranch"
+        apiGroup: "meta.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Response.metadata.name}}"
+        namespace: "{{.Response.metadata.namespace}}"
+  - match:
+      path: /namespaces/[0-9A-Za-z-]+/integrations/[0-9A-Za-z-]+/projects/[-./A-Za-z0-9_\p{Han}]+/coderepositories/[0-9A-Za-z-]+/branches
+      methods: ["post"]
+    process:
+      objectRef:
+        resource: "GitBranch"
+        apiGroup: "meta.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Response.metadata.name}}"
+        namespace: "{{.Response.metadata.namespace}}"
+  - match:
+      path: /integrations/v1alpha1/namespaces/[0-9A-Za-z-]+/integrations/[0-9A-Za-z-]+/projects/[-./A-Za-z0-9_\p{Han}]+/coderepositories/[-./A-Za-z0-9_\p{Han}]+/files
+      methods: ["post"]
+    process:
+      objectRef:
+        resource: "GitRepository"
+        apiGroup: "meta.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Request.filePath}}"
+        namespace: "{{.Request.branch}}"
+
+  - match:
+      path: /files/v1alpha1/integrations/[0-9A-Za-z-]+/namespaces/[0-9A-Za-z-]+/projects/[-./A-Za-z0-9_\p{Han}]+/upload
+      methods: [ "post" ]
+    process:
+      objectRef:
+        resource: "artifactuploads"
+        apiGroup: "artifacts.pkg.katanomi.dev"
+        apiVersion: "v1alpha1"
+        name: "{{.Response.metadata.name}}"
+        namespace: "{{.Response.metadata.namespace}}"
