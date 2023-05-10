@@ -1,1 +1,9 @@
-this is a docker-compose files
+version: "3"
+services:
+  webapp:
+    image: examples/web
+    ports:
+      - "80:80"
+    volumes:
+      - "/data"
+      
